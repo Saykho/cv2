@@ -426,6 +426,11 @@ void SystemInit_ExtMemCtl(void)
 
   /* Enable GPIOD, GPIOE, GPIOF and GPIOG interface clock */
   RCC->AHBENR   = 0x000080D8;
+  
+  GPIOA->MODER = (uint32_t)0b01<<(2*5);
+  GPIOA->OTYPER = 0x00000000;
+  GPIOA->PUPDR = (uint32_t)0b01<<(2*5);
+  GPIOA->OSPEEDR = (uint32_t)0b11<<(2*5);
 
   /* Connect PDx pins to FSMC Alternate function */
   GPIOD->AFR[0]  = 0x00CC00CC;

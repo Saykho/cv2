@@ -75,7 +75,7 @@ int main(void)
   /* Infinite loop */
   while (1)
   {
-	GPIOA->ODR |= (uint32_t)(0b01<<5);
+	GPIOA->ODR = (uint32_t)0b01<<(2*5);
   }
   return 0;
 }

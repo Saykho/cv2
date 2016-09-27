@@ -67,15 +67,12 @@ int main(void)
   */
 
   /* TODO - Add your application code here */
-  GPIOA->MODER = (uint32_t)0b01<<(2*5);
-  GPIOA->OTYPER = 0x00000000;
-  GPIOA->PUPDR = (uint32_t)0b01<<(2*5);
-  GPIOA->OSPEEDR = (uint32_t)0b11<<(2*5);
+
 
   /* Infinite loop */
   while (1)
   {
-	GPIOA->ODR |= (uint32_t)(0b01<<5);
+	GPIOA->ODR = (uint32_t)0b01<<(2*5);
   }
   return 0;
 }
