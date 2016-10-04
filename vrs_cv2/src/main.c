@@ -72,15 +72,17 @@ int main(void)
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
 
 	GPIOA->MODER &= ~((uint32_t)0b11<<(2*5));
-	GPIOA->MODER |= (uint32_t)0b01<<(2*5);
-	GPIOA->OTYPER &= ~((uint32_t)0b01<<5);
+	GPIOA->MODER |= (uint32_t)0b01<<(2*5); //Out
+	GPIOA->OTYPER &= ~((uint32_t)0b01<<5); //Push-Pull
 	GPIOA->PUPDR &= ~((uint32_t)0b11<<(2*5));
-	GPIOA->PUPDR |= (uint32_t)0b01<<(2*5);
-	GPIOA->OSPEEDR |= (uint32_t)0b11<<(2*5);
+	GPIOA->PUPDR |= (uint32_t)0b01<<(2*5); //Pull UP
+	GPIOA->OSPEEDR |= (uint32_t)0b11<<(2*5); //Very high
 
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOC, ENABLE);
-	GPIOA->MODER &= ~((uint32_t)0b11<<(2*5));
-	GPIOA->PUPDR &= ~((uint32_t)0b11<<(2*5));
+	GPIOC->MODER &= ~((uint32_t)0b11<<(2*5)); //In
+	GPIOC->OTYPER &= ~((uint32_t)0b01<<5); //Push-Pull
+	GPIOC->PUPDR &= ~((uint32_t)0b11<<(2*5)); //No pull
+	GPIOC->OSPEEDR |= (uint32_t)0b11<<(2*5); //Very high
 
 
   /* Infinite loop */
