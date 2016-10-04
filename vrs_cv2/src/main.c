@@ -35,6 +35,8 @@ SOFTWARE.
 /* Private define  */
 /* Private macro */
 /* Private variables */
+static __IO uint32_t TimingDelay;
+
 /* Private function prototypes */
 /* Private functions */
 
@@ -67,17 +69,46 @@ int main(void)
   */
 
   /* TODO - Add your application code here */
-  GPIOA->MODER = (uint32_t)0b01<<(2*5);
-  GPIOA->OTYPER = 0x00000000;
-  GPIOA->PUPDR = (uint32_t)0b01<<(2*5);
-  GPIOA->OSPEEDR = (uint32_t)0b11<<(2*5);
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
+
+	GPIOA->MODER &= ~((uint32_t)0b11<<(2*5));
+	GPIOA->PUPDR &= ~((uint32_t)0b11<<(2*5));
+
+	GPIOA->MODER |= (uint32_t)0b01<<(2*5);
+	GPIOA->OTYPER &= ~((uint32_t)0b01<<5);
+	GPIOA->PUPDR |= (uint32_t)0b01<<(2*5);
+	GPIOA->OSPEEDR |= (uint32_t)0b11<<(2*5);
 
   /* Infinite loop */
-  while (1)
+	while (1)
+	{
+		GPIOA->ODR &= ~((uint32_t)(0b01<<5));
+		for (int i=0; i<100000;i++);
+		GPIOA->ODR |= (uint32_t)(0b01<<5);
+		for (int i=0; i<100000;i++);
+	}
+	return 0;
+}
+
+/**
+* @brief  Inserts a delay time.
+* @param  nTime: specifies the delay time length, in 1 ms.
+* @retval None
+*/
+void Delay(__IO uint32_t nTime)
+{
+
+//  TimingDelay = nTime;
+
+//  while(TimingDelay != 0);
+}
+
+void TimingDelay_Decrement(void)
+{
+  if (TimingDelay != 0x00)
   {
-	GPIOA->ODR |= (uint32_t)(0b01<<5);
+    TimingDelay--;
   }
-  return 0;
 }
 
 #ifdef  USE_FULL_ASSERT
