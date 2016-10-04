@@ -8,6 +8,7 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 
+void Delay(__IO uint32_t nTime);
 void TimingDelay_Decrement(void);
 
 #endif /* MAIN_H_ */

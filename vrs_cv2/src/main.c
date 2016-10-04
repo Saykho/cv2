@@ -72,18 +72,34 @@ int main(void)
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
 
 	GPIOA->MODER &= ~((uint32_t)0b11<<(2*5));
-	GPIOA->PUPDR &= ~((uint32_t)0b11<<(2*5));
-
 	GPIOA->MODER |= (uint32_t)0b01<<(2*5);
 	GPIOA->OTYPER &= ~((uint32_t)0b01<<5);
+	GPIOA->PUPDR &= ~((uint32_t)0b11<<(2*5));
 	GPIOA->PUPDR |= (uint32_t)0b01<<(2*5);
 	GPIOA->OSPEEDR |= (uint32_t)0b11<<(2*5);
+
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOC, ENABLE);
+	GPIOA->MODER &= ~((uint32_t)0b11<<(2*5));
+	GPIOA->PUPDR &= ~((uint32_t)0b11<<(2*5));
+
 
   /* Infinite loop */
 	while (1)
 	{
-		GPIOA->ODR ^= ((uint32_t)(0b01<<5));
-		for (int i=0; i<100000;i++);
+		GPIOA->ODR |= (uint32_t)(0b01<<5); //on
+		Delay(500);
+		GPIOA->ODR &= ~(uint32_t)(0b01<<5); //off
+		Delay(500);
+
+		for (int i = 0; i < 4; i++) {
+			GPIOA->ODR ^= (uint32_t)(0b01<<5);
+			Delay(100);
+		}
+
+		GPIOA->BSRRL |= (uint32_t)(0b01<<5); //set (on)
+		Delay(1000);
+		GPIOA->BSRRH |= (uint32_t)(0b01<<5); //reset (off)
+		Delay(100);
 	}
 	return 0;
 }
@@ -95,7 +111,7 @@ int main(void)
 */
 void Delay(__IO uint32_t nTime)
 {
-
+	for (int i=0; i<1000*nTime;i++);
 //  TimingDelay = nTime;
 
 //  while(TimingDelay != 0);
