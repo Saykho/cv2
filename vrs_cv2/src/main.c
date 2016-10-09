@@ -113,16 +113,14 @@ int main(void)
 
 
 		GPIOA->ODR ^= (uint32_t)(0b01<<5);
-		Delay(500);
-//
-//		for (int i=0; i<50; i++) {
-//			int pressed = (GPIOC->IDR & (uint32_t)(0b01<<5)) != 0;
-//			if (pressed == 0 && lastPressed = 1) {
-//				GPIOA->ODR ^= (uint32_t)(0b01<<5);
-//			}
-//			lastPressed = pressed;
-//			Delay(10);
-//		}
+		for (int i=0; i<10; i++) {
+			int pressed = (GPIOC->IDR & (uint32_t)(0b01<<5)) != 0;
+			if (pressed == 0 && lastPressed = 1) {
+				GPIOA->ODR ^= (uint32_t)(0b01<<5);
+			}
+			lastPressed = pressed;
+			Delay(50);
+		}
 
 	}
 	return 0;
