@@ -79,15 +79,16 @@ int main(void)
 	GPIOA->OSPEEDR |= (uint32_t)0b11<<(2*5); //Very high
 
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOC, ENABLE);
-	GPIOC->MODER &= ~((uint32_t)0b11<<(2*5)); //In
-	GPIOC->OTYPER &= ~((uint32_t)0b01<<5); //Push-Pull
-	GPIOC->PUPDR &= ~((uint32_t)0b11<<(2*5)); //No pull
-	GPIOC->OSPEEDR |= (uint32_t)0b11<<(2*5); //Very high
+	GPIOC->MODER &= ~((uint32_t)0b11<<(2*13)); //In
+	GPIOC->OTYPER &= ~((uint32_t)0b01<<13); //Push-Pull
+	GPIOC->PUPDR &= ~((uint32_t)0b11<<(2*13)); //No pull
+	GPIOC->OSPEEDR |= (uint32_t)0b11<<(2*13); //Very high
 
-
+	int lastPressed = 0;
   /* Infinite loop */
 	while (1)
 	{
+		//Uloha 1
 //		GPIOA->ODR |= (uint32_t)(0b01<<5); //on
 //		Delay(500);
 //		GPIOA->ODR &= ~(uint32_t)(0b01<<5); //off
@@ -103,7 +104,23 @@ int main(void)
 //		GPIOA->BSRRH |= (uint32_t)(0b01<<5); //reset (off)
 //		Delay(100);
 
-		int pressed = (GPIOC->IDR & (uint32_t)(0b01<<5)) != 0;
+		//Uloha 2
+		int pressed = (GPIOC->IDR & (uint32_t)(0b01<<13)) != 0;
+
+		//Uloha 3
+//		int pressed = (GPIOC->IDR & (uint32_t)(0b01<<13)) != 0;
+
+
+//		GPIOA->ODR ^= (uint32_t)(0b01<<5);
+//
+//		for (int i=0; i<50; i++) {
+//			int pressed = (GPIOC->IDR & (uint32_t)(0b01<<5)) != 0;
+//			if (pressed == 0 && lastPressed = 1) {
+//				GPIOA->ODR ^= (uint32_t)(0b01<<5);
+//			}
+//			lastPressed = pressed;
+//			Delay(10);
+//		}
 
 	}
 	return 0;
