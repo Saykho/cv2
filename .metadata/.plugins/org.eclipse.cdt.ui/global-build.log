@@ -1,10 +1,20 @@
-15:50:18 **** Incremental Build of configuration Debug for project vrs_cv2 ****
+16:10:03 **** Incremental Build of configuration Debug for project vrs_cv2 ****
 Info: Internal Builder is used for build
 arm-atollic-eabi-gcc -c -mthumb -mcpu=cortex-m3 -std=gnu11 -DSTM32L1XX_HD -DUSE_STDPERIPH_DRIVER -I../src -I..\Libraries\STM32L1xx_StdPeriph_Driver\inc -I..\Libraries\CMSIS\Include -I..\Libraries\CMSIS\Device\ST\STM32L1xx\Include -O0 -ffunction-sections -fdata-sections -g -Wall -o src\main.o ..\src\main.c 
 ..\src\main.c: In function 'main':
-..\src\main.c:106:7: warning: unused variable 'pressed' [-Wunused-variable]
-   int pressed = (GPIOC->IDR & (uint32_t)(0b01<<5)) != 0;
+..\src\main.c:122:4: warning: implicit declaration of function 'Delay' [-Wimplicit-function-declaration]
+    Delay(50);
+    ^
+..\src\main.c:108:7: warning: unused variable 'pressed' [-Wunused-variable]
+   int pressed = (GPIOC->IDR & (uint32_t)(0b01<<13)) != 0;
        ^
+..\src\main.c: At top level:
+..\src\main.c:134:6: warning: conflicting types for 'Delay'
+ void Delay(__IO uint32_t nTime)
+      ^
+..\src\main.c:122:4: note: previous implicit declaration of 'Delay' was here
+    Delay(50);
+    ^
 arm-atollic-eabi-gcc Libraries\STM32L1xx_StdPeriph_Driver\src\misc.o Libraries\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_adc.o Libraries\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_aes.o Libraries\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_aes_util.o Libraries\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_comp.o Libraries\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_crc.o Libraries\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_dac.o Libraries\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_dbgmcu.o Libraries\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_dma.o Libraries\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_exti.o Libraries\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_flash.o Libraries\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_flash_ramfunc.o Libraries\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_fsmc.o Libraries\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_gpio.o Libraries\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_i2c.o Libraries\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_iwdg.o Libraries\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_lcd.o Libraries\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_opamp.o Libraries\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_pwr.o Libraries\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_rcc.o Libraries\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_rtc.o Libraries\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_sdio.o Libraries\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_spi.o Libraries\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_syscfg.o Libraries\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_tim.o Libraries\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_usart.o Libraries\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_wwdg.o src\main.o src\startup_stm32l1xx_hd.o src\stm32l1xx_it.o src\system_stm32l1xx.o src\tiny_printf.o -o vrs_cv2.elf -mthumb -mcpu=cortex-m3 -T..\stm32_flash.ld -Wl,--start-group -lc -lm -Wl,--end-group -specs=nano.specs -specs=nosys.specs -static -Wl,-cref,-u,Reset_Handler -Wl,-Map=vrs_cv2.map -Wl,--gc-sections -Wl,--defsym=malloc_getpagesize_P=0x80 
 arm-atollic-eabi-gcc: error: Libraries\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_adc.o: No such file or directory
 arm-atollic-eabi-gcc: error: Libraries\STM32L1xx_StdPeriph_Driver\src\stm32l1xx_comp.o: No such file or directory

@@ -105,7 +105,7 @@ int main(void)
 //		Delay(100);
 
 		//Uloha 2
-		int pressed = (GPIOC->IDR & (uint32_t)(0b01<<13)) != 0;
+//		int pressed = (GPIOC->IDR & (uint32_t)(0b01<<13)) != 0;
 
 		//Uloha 3
 
@@ -115,7 +115,7 @@ int main(void)
 		GPIOA->ODR ^= (uint32_t)(0b01<<5);
 		for (int i=0; i<10; i++) {
 			int pressed = (GPIOC->IDR & (uint32_t)(0b01<<5)) != 0;
-			if (pressed == 0 && lastPressed = 1) {
+			if (pressed == 0 && lastPressed == 1) {
 				GPIOA->ODR ^= (uint32_t)(0b01<<5);
 			}
 			lastPressed = pressed;
