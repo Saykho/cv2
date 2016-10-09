@@ -108,7 +108,7 @@ int main(void)
 		int pressed = (GPIOC->IDR & (uint32_t)(0b01<<13)) != 0;
 
 		//Uloha 3
-//		int pressed = (GPIOC->IDR & (uint32_t)(0b01<<13)) != 0;
+		GPIOA->ODR = (uint32_t)(((uint32_t)pressed)<<5) | GPIOA->ODR & ~(uint32_t)(0b01<<5);
 
 
 //		GPIOA->ODR ^= (uint32_t)(0b01<<5);
