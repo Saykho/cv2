@@ -88,20 +88,23 @@ int main(void)
   /* Infinite loop */
 	while (1)
 	{
-		GPIOA->ODR |= (uint32_t)(0b01<<5); //on
-		Delay(500);
-		GPIOA->ODR &= ~(uint32_t)(0b01<<5); //off
-		Delay(500);
+//		GPIOA->ODR |= (uint32_t)(0b01<<5); //on
+//		Delay(500);
+//		GPIOA->ODR &= ~(uint32_t)(0b01<<5); //off
+//		Delay(500);
+//
+//		for (int i = 0; i < 4; i++) {
+//			GPIOA->ODR ^= (uint32_t)(0b01<<5);
+//			Delay(100);
+//		}
+//
+//		GPIOA->BSRRL |= (uint32_t)(0b01<<5); //set (on)
+//		Delay(1000);
+//		GPIOA->BSRRH |= (uint32_t)(0b01<<5); //reset (off)
+//		Delay(100);
 
-		for (int i = 0; i < 4; i++) {
-			GPIOA->ODR ^= (uint32_t)(0b01<<5);
-			Delay(100);
-		}
+		int pressed = (GPIOC->IDR & (uint32_t)(0b01<<5)) != 0;
 
-		GPIOA->BSRRL |= (uint32_t)(0b01<<5); //set (on)
-		Delay(1000);
-		GPIOA->BSRRH |= (uint32_t)(0b01<<5); //reset (off)
-		Delay(100);
 	}
 	return 0;
 }
