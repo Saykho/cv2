@@ -45,3 +45,8 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+*.log
+.metadata/*
+*.log
+*.log
+.metadata/.plugins/org.eclipse.cdt.ui/global-build.log
