@@ -38,8 +38,9 @@ SOFTWARE.
 /* Private function prototypes */
 /* Private functions */
 void adc_init();
+void gpio_init();
 void Delay(__IO uint32_t nTime);
-
+int getPressedButton();
 
 /**
 **===========================================================================
@@ -74,31 +75,24 @@ int main(void)
 
 //	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
 
-	GPIOA->MODER &= ~((uint32_t)0b11<<(2*5));
-	GPIOA->MODER |= (uint32_t)0b01<<(2*5); //Out
-	GPIOA->OTYPER &= ~((uint32_t)0b01<<5); //Push-Pull
-	GPIOA->PUPDR &= ~((uint32_t)0b11<<(2*5));
-	GPIOA->PUPDR |= (uint32_t)0b01<<(2*5); //Pull UP
-	GPIOA->OSPEEDR |= (uint32_t)0b11<<(2*5); //Very high
+	gpio_init();
 
-	int buttonValues[] = {2500, 3000, 3550, 3800};
 	/* Infinite loop */
+
+	int delays[] = {1,4,9,16,25};
+	int mode = 4;
+	int lastButtonPressed = 4;
 	while (1)
 	{
 		GPIOA->ODR ^= (uint32_t)(0b01<<5);
 
-		int buttonPressed = 4;
-		for (int i=0; i<buttonPressed*buttonPressed; i++) {
-			ADC_SoftwareStartConv(ADC1);
-			while(!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)){}
-			int AD_value=ADC_GetConversionValue(ADC1);
+		for (int i=0; i<delays[mode]; i++) {
 
-			buttonPressed = 0;
-			for (buttonPressed = 0; buttonPressed < 4; buttonPressed++) {
-				if (buttonValues[buttonPressed] > AD_value)
-					break;
+			int buttonPressed = getPressedButton();
+			if (lastButtonPressed != 4 && buttonPressed == 4) {
+				mode = lastButtonPressed;
 			}
-			buttonPressed++;
+			lastButtonPressed = buttonPressed;
 			Delay(10);
 		}
 	}
@@ -111,6 +105,31 @@ void Delay(__IO uint32_t nTime)
 //  TimingDelay = nTime;
 
 //  while(TimingDelay != 0);
+}
+
+int getPressedButton() {
+	int buttonValues[] = {2500, 3000, 3550, 3800};
+
+	ADC_SoftwareStartConv(ADC1);
+	while(!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)){}
+	int AD_value=ADC_GetConversionValue(ADC1);
+
+	int buttonPressed = 0;
+	for (buttonPressed = 0; buttonPressed < 4; buttonPressed++) {
+		if (buttonValues[buttonPressed] > AD_value)
+			break;
+	}
+
+	return buttonPressed;
+}
+
+void gpio_init() {
+	GPIOA->MODER &= ~((uint32_t)0b11<<(2*5));
+	GPIOA->MODER |= (uint32_t)0b01<<(2*5); //Out
+	GPIOA->OTYPER &= ~((uint32_t)0b01<<5); //Push-Pull
+	GPIOA->PUPDR &= ~((uint32_t)0b11<<(2*5));
+	GPIOA->PUPDR |= (uint32_t)0b01<<(2*5); //Pull UP
+	GPIOA->OSPEEDR |= (uint32_t)0b11<<(2*5); //Very high
 }
 
 void adc_init()

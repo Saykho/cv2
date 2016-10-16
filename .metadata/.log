@@ -2825,3 +2825,73 @@ java.net.ConnectException: Connection refused: connect
 !ENTRY com.atollic.hardwaredebug.stlink 4 0 2016-10-11 18:35:31.025
 !MESSAGE Sent answer
 
+
+!ENTRY com.atollic.truestudio.productmanager 1 0 2016-10-16 15:10:03.301
+!MESSAGE Unloading product manager
+!SESSION 2016-10-16 15:10:15.125 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=1.8.0_102
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86, WS=win32, NL=sk_SK
+Command-line arguments:  -os win32 -ws win32 -arch x86
+
+!ENTRY com.atollic.truestudio.productmanager 1 0 2016-10-16 15:21:35.294
+!MESSAGE Loading product manager
+
+!ENTRY com.atollic.truestudio.productmanager 1 0 2016-10-16 15:21:36.197
+!MESSAGE OS info: Windows 10, 10.0
+
+!ENTRY TrueSTUDIO 1 0 2016-10-16 15:21:47.851
+!MESSAGE Target:ARM, Version:6.0.0, Build date: 20160823-1314, Installation dir:/C:/Program Files (x86)/Atollic/TrueSTUDIO for ARM 6.0.0/ide/
+
+!ENTRY TrueSTUDIO License 1 0 2016-10-16 15:21:50.860
+!MESSAGE Valid local features found: 0
+
+!ENTRY TrueSTUDIO License 1 0 2016-10-16 15:21:50.870
+!MESSAGE Valid network features found: 0
+
+!ENTRY TrueSTUDIO License 1 0 2016-10-16 15:21:50.885
+!MESSAGE License system initialized in 1258ms
+
+!ENTRY TrueSTUDIO 1 0 2016-10-16 15:21:50.899
+!MESSAGE License numbers: 0 []
+
+!ENTRY TrueSTUDIO 1 0 2016-10-16 15:21:50.910
+!MESSAGE This installation is running as LITE
+
+!ENTRY org.eclipse.jface 2 0 2016-10-16 16:29:25.656
+!MESSAGE Keybinding conflicts occurred.  They may interfere with normal accelerator operation.
+!SUBENTRY 1 org.eclipse.jface 2 0 2016-10-16 16:29:25.656
+!MESSAGE A conflict occurred for ALT+CTRL+T:
+Binding(ALT+CTRL+T,
+	ParameterizedCommand(Command(org.eclipse.team.svn.ui.command.EditPropertiesCommand,Show Properties,
+		,
+		Category(org.eclipse.team.svn.ui.command.category,SVN,null,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@2e6b40,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.contexts.window,,,system)
+Binding(ALT+CTRL+T,
+	ParameterizedCommand(Command(org.eclipse.tm.terminal.connector.local.command.launch,Open Local Terminal on Selection,
+		,
+		Category(org.eclipse.tm.terminal.view.ui.commands.category,Terminal Commands,null,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@165084e,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.contexts.window,,,system)
+
+!ENTRY com.atollic.truestudio.integration.processorexpert 0 0 2016-10-16 16:29:46.944
+!MESSAGE Atollic TrueSTUDIO Processor Expert integration is up.
+
+!ENTRY edu.hawaii.ics.csdl.jupiter 1 0 2016-10-16 16:29:48.283
+!MESSAGE Code Review is up.
+
+!ENTRY org.eclipse.egit.ui 2 0 2016-10-16 16:30:32.147
+!MESSAGE Warning: The environment variable HOME is not set. The following directory will be used to store the Git
+user global configuration and to define the default location to store repositories: 'C:\Users\Matej Vargovcik'. If this is
+not correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and
+EGit might behave differently since they see different configuration options.
+This warning can be switched off on the Team > Git > Confirmations and Warnings preference page.
+
+!ENTRY org.eclipse.cdt.core 1 0 2016-10-16 16:49:12.729
+!MESSAGE Indexed 'vrs_cv4' (31 sources, 37 headers) in 6,23 sec: 6 046 declarations; 15 183 references; 11 unresolved inclusions; 86 syntax errors; 5 471 unresolved names (20 %)
