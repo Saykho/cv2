@@ -29,7 +29,7 @@ SOFTWARE.
 /* Includes */
 #include <stddef.h>
 #include "stm32l1xx.h"
-
+#include "vrs_cv5.h"
 
 /* Private typedef */
 /* Private define  */
@@ -38,6 +38,9 @@ SOFTWARE.
 /* Private function prototypes */
 /* Private functions */
 void adc_init();
+void Delay(uint32_t nTime);
+void interrupt_init();
+void gpio_init();
 
 /**
 **===========================================================================
@@ -48,8 +51,6 @@ void adc_init();
 */
 int main(void)
 {
-  int i = 0;
-
   /**
   *  IMPORTANT NOTE!
   *  See the <system_*.c> file and how/if the SystemInit() function updates 
@@ -69,14 +70,45 @@ int main(void)
 
   /* TODO - Add your application code here */
 
-  adc_init();
+    adc_init();
+    interrupt_init();
+    gpio_init();
+    ADC_Cmd(ADC1, ENABLE);
+    ADC_SoftwareStartConv(ADC1);
 
-  /* Infinite loop */
-  while (1)
-  {
-	i++;
-  }
-  return 0;
+	int buttonValues[] = {2500, 3000, 3550, 3800};
+
+    int delays[] = {2,4,9,16,25};
+	int mode = 4;
+	int lastButtonPressed = 4;
+  	while (1)
+  	{
+  		GPIOA->ODR ^= (uint32_t)(0b01<<5);
+
+  		for (int i=0; i<delays[mode]; i++) {
+
+  			int buttonPressed = 0;
+  			for (buttonPressed = 0; buttonPressed < 4; buttonPressed++) {
+  				if (buttonValues[buttonPressed] > AD_value)
+  					break;
+  			}
+
+  			if (lastButtonPressed != 4 && buttonPressed == 4) {
+  				mode = lastButtonPressed;
+  			}
+  			lastButtonPressed = buttonPressed;
+  			Delay(20);
+  		}
+  	}
+    return 0;
+}
+
+void Delay(uint32_t nTime)
+{
+	for (int i=0; i<1000*nTime;i++);
+//  TimingDelay = nTime;
+
+//  while(TimingDelay != 0);
 }
 
 void adc_init()
@@ -107,13 +139,28 @@ void adc_init()
 	ADC_Init(ADC1, &ADC_InitStructure);
 	/* ADCx regular channel8 configuration */
 	ADC_RegularChannelConfig(ADC1, ADC_Channel_4, 1, ADC_SampleTime_16Cycles); //tu nastavit pin
-	/* Enable the ADC */
-	ADC_Cmd(ADC1, ENABLE);
-	/* Wait until the ADC1 is ready */
-	while(ADC_GetFlagStatus(ADC1, ADC_FLAG_ADONS) == RESET)
-	{
-	}
-	/* Start ADC Software Conversion */
+}
+
+void interrupt_init() {
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
+	NVIC_InitTypeDef NVIC_InitStructure;
+	NVIC_InitStructure.NVIC_IRQChannel = ADC1_IRQn; //zoznam prerušení nájdete v súbore stm32l1xx.h
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 15;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+
+	ADC_ITConfig(ADC1, ADC_IT_EOC, ENABLE);
+//	ADC_ITConfig(ADC1, ADC_IT_OVR, ENABLE);
+}
+
+void gpio_init() {
+	GPIOA->MODER &= ~((uint32_t)0b11<<(2*5));
+	GPIOA->MODER |= (uint32_t)0b01<<(2*5); //Out
+	GPIOA->OTYPER &= ~((uint32_t)0b01<<5); //Push-Pull
+	GPIOA->PUPDR &= ~((uint32_t)0b11<<(2*5));
+	GPIOA->PUPDR |= (uint32_t)0b01<<(2*5); //Pull UP
+	GPIOA->OSPEEDR |= (uint32_t)0b11<<(2*5); //Very high
 }
 
 #ifdef  USE_FULL_ASSERT
