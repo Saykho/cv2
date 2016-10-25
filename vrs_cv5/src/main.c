@@ -71,10 +71,10 @@ int main(void)
   /* TODO - Add your application code here */
 
     adc_init();
-    interrupt_init();
     gpio_init();
-    ADC_Cmd(ADC1, ENABLE);
-    ADC_SoftwareStartConv(ADC1);
+    interrupt_init();
+
+
 
 	int buttonValues[] = {2500, 3000, 3550, 3800};
 
@@ -113,21 +113,14 @@ void Delay(uint32_t nTime)
 
 void adc_init()
 {
-	GPIO_InitTypeDef GPIO_InitStructure;
 	ADC_InitTypeDef ADC_InitStructure;
 	/* Enable GPIO clock */
-	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);//Opravi a upravi
-	/* Configure ADCx Channel 2 as analog input */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 ; //tu nastavit pin
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL ;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	/* Enable ADC clock */
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
 	/* Enable the HSI oscillator */
 	RCC_HSICmd(ENABLE);
 	/* Check that HSI oscillator is ready */
 	while(RCC_GetFlagStatus(RCC_FLAG_HSIRDY) == RESET);
-	/* Enable ADC clock */
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
 	/* Initialize ADC structure */
 	ADC_StructInit(&ADC_InitStructure);
 	/* ADC1 configuration */
@@ -138,29 +131,50 @@ void adc_init()
 	ADC_InitStructure.ADC_NbrOfConversion = 1;
 	ADC_Init(ADC1, &ADC_InitStructure);
 	/* ADCx regular channel8 configuration */
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_4, 1, ADC_SampleTime_16Cycles); //tu nastavit pin
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_4, 1, ADC_SampleTime_384Cycles); //tu nastavit pin
+
+    ADC_Cmd(ADC1, ENABLE);
+
+    while (ADC_GetFlagStatus(ADC1, ADC_FLAG_ADONS) == RESET);
+
+    ADC_SoftwareStartConv(ADC1);
+	ADC_ITConfig(ADC1, ADC_IT_EOC, ENABLE);
 }
 
 void interrupt_init() {
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
 	NVIC_InitTypeDef NVIC_InitStructure;
 	NVIC_InitStructure.NVIC_IRQChannel = ADC1_IRQn; //zoznam prerušení nájdete v súbore stm32l1xx.h
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 15;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 
-	ADC_ITConfig(ADC1, ADC_IT_EOC, ENABLE);
 //	ADC_ITConfig(ADC1, ADC_IT_OVR, ENABLE);
 }
 
 void gpio_init() {
-	GPIOA->MODER &= ~((uint32_t)0b11<<(2*5));
-	GPIOA->MODER |= (uint32_t)0b01<<(2*5); //Out
-	GPIOA->OTYPER &= ~((uint32_t)0b01<<5); //Push-Pull
-	GPIOA->PUPDR &= ~((uint32_t)0b11<<(2*5));
-	GPIOA->PUPDR |= (uint32_t)0b01<<(2*5); //Pull UP
-	GPIOA->OSPEEDR |= (uint32_t)0b11<<(2*5); //Very high
+	GPIO_InitTypeDef GPIO_InitStructure;
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);//Opravi a upravi
+	/* Configure ADCx Channel 2 as analog input */
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_40MHz;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL ;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4; //tu nastavit pin
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5; //tu nastavit pin
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+//	GPIOA->MODER &= ~((uint32_t)0b11<<(2*5));
+//	GPIOA->MODER |= (uint32_t)0b01<<(2*5); //Out
+//	GPIOA->OTYPER &= ~((uint32_t)0b01<<5); //Push-Pull
+//	GPIOA->PUPDR &= ~((uint32_t)0b11<<(2*5));
+//	GPIOA->PUPDR |= (uint32_t)0b01<<(2*5); //Pull UP
+//	GPIOA->OSPEEDR |= (uint32_t)0b11<<(2*5); //Very high
 }
 
 #ifdef  USE_FULL_ASSERT

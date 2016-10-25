@@ -12,6 +12,6 @@
 uint32_t AD_value;
 
 void ADC1_IRQHandler() {
-	uint32_t AD_value = ADC1->DR;
-
+	if (ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == SET)
+		AD_value = ADC1->DR;
 }
