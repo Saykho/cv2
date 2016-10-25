@@ -161,20 +161,27 @@ void gpio_init() {
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_40MHz;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL ;
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4; //tu nastavit pin
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5; //tu nastavit pin
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-//	GPIOA->MODER &= ~((uint32_t)0b11<<(2*5));
-//	GPIOA->MODER |= (uint32_t)0b01<<(2*5); //Out
-//	GPIOA->OTYPER &= ~((uint32_t)0b01<<5); //Push-Pull
-//	GPIOA->PUPDR &= ~((uint32_t)0b11<<(2*5));
-//	GPIOA->PUPDR |= (uint32_t)0b01<<(2*5); //Pull UP
-//	GPIOA->OSPEEDR |= (uint32_t)0b11<<(2*5); //Very high
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_40MHz;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+}
+
+void uart_init() {
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_USART1);
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource10, GPIO_AF_USART1);
 }
 
 #ifdef  USE_FULL_ASSERT
