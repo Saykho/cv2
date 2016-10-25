@@ -79,7 +79,7 @@ int main(void)
 
 	/* Infinite loop */
 
-	int delays[] = {1,4,9,16,25};
+	int delays[] = {2,4,9,16,25};
 	int mode = 4;
 	int lastButtonPressed = 4;
 	while (1)
