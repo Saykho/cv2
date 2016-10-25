@@ -35,6 +35,8 @@ SOFTWARE.
 /* Private define  */
 /* Private macro */
 /* Private variables */
+static __IO uint32_t TimingDelay;
+
 /* Private function prototypes */
 /* Private functions */
 
@@ -67,17 +69,82 @@ int main(void)
   */
 
   /* TODO - Add your application code here */
-  GPIOA->MODER = (uint32_t)0b01<<(2*5);
-  GPIOA->OTYPER = 0x00000000;
-  GPIOA->PUPDR = (uint32_t)0b01<<(2*5);
-  GPIOA->OSPEEDR = (uint32_t)0b11<<(2*5);
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
 
+	GPIOA->MODER &= ~((uint32_t)0b11<<(2*5));
+	GPIOA->MODER |= (uint32_t)0b01<<(2*5); //Out
+	GPIOA->OTYPER &= ~((uint32_t)0b01<<5); //Push-Pull
+	GPIOA->PUPDR &= ~((uint32_t)0b11<<(2*5));
+	GPIOA->PUPDR |= (uint32_t)0b01<<(2*5); //Pull UP
+	GPIOA->OSPEEDR |= (uint32_t)0b11<<(2*5); //Very high
+
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOC, ENABLE);
+	GPIOC->MODER &= ~((uint32_t)0b11<<(2*13)); //In
+	GPIOC->OTYPER &= ~((uint32_t)0b01<<13); //Push-Pull
+	GPIOC->PUPDR &= ~((uint32_t)0b11<<(2*13)); //No pull
+	GPIOC->OSPEEDR |= (uint32_t)0b11<<(2*13); //Very high
+
+	int lastPressed = 0;
   /* Infinite loop */
-  while (1)
+	while (1)
+	{
+		//Uloha 1
+//		GPIOA->ODR |= (uint32_t)(0b01<<5); //on
+//		Delay(500);
+//		GPIOA->ODR &= ~(uint32_t)(0b01<<5); //off
+//		Delay(500);
+//
+//		for (int i = 0; i < 4; i++) {
+//			GPIOA->ODR ^= (uint32_t)(0b01<<5);
+//			Delay(100);
+//		}
+//
+//		GPIOA->BSRRL |= (uint32_t)(0b01<<5); //set (on)
+//		Delay(1000);
+//		GPIOA->BSRRH |= (uint32_t)(0b01<<5); //reset (off)
+//		Delay(100);
+
+		//Uloha 2
+//		int pressed = (GPIOC->IDR & (uint32_t)(0b01<<13)) != 0;
+
+		//Uloha 3
+
+//		GPIOA->ODR = (uint32_t)(((uint32_t)pressed)<<5) | GPIOA->ODR & ~(uint32_t)(0b01<<5);
+
+
+		GPIOA->ODR ^= (uint32_t)(0b01<<5);
+		for (int i=0; i<10; i++) {
+			int pressed = (GPIOC->IDR & (uint32_t)(0b01<<5)) != 0;
+			if (pressed == 0 && lastPressed == 1) {
+				GPIOA->ODR ^= (uint32_t)(0b01<<5);
+			}
+			lastPressed = pressed;
+			Delay(50);
+		}
+
+	}
+	return 0;
+}
+
+/**
+* @brief  Inserts a delay time.
+* @param  nTime: specifies the delay time length, in 1 ms.
+* @retval None
+*/
+void Delay(__IO uint32_t nTime)
+{
+	for (int i=0; i<1000*nTime;i++);
+//  TimingDelay = nTime;
+
+//  while(TimingDelay != 0);
+}
+
+void TimingDelay_Decrement(void)
+{
+  if (TimingDelay != 0x00)
   {
-	GPIOA->ODR |= (uint32_t)(0b01<<5);
+    TimingDelay--;
   }
-  return 0;
 }
 
 #ifdef  USE_FULL_ASSERT
