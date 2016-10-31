@@ -157,9 +157,9 @@ int getPressedButton() {
 }
 
 void rcc_init() {
-	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);//Opraviù a upraviù
-	RCC_APBjPeriphClockCmd(RCC_APBjPeriph_USARTi, ENABLE);
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
+	RCC_APBjPeriphClockCmd(RCC_APBjPeriph_USARTi, ENABLE);
 }
 void adc_init()
 {
@@ -178,7 +178,7 @@ void adc_init()
 	ADC_InitStructure.ADC_NbrOfConversion = 1;
 	ADC_Init(ADC1, &ADC_InitStructure);
 	/* ADCx regular channel8 configuration */
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_4, 1, ADC_SampleTime_384Cycles); //tu nastavit pin
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_4, 1, ADC_SampleTime_384Cycles);
 
     ADC_Cmd(ADC1, ENABLE);
 

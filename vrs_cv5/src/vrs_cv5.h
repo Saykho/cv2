@@ -7,6 +7,7 @@
 #define RCC_APBjPeriph_USARTi RCC_APB1Periph_USART2
 #define RCC_APBjPeriphClockCmd RCC_APB1PeriphClockCmd
 //also change interrupt function name in vrs_cv5.c
+//also change pins of UART communication in main.c
 
 extern uint32_t AD_value;
 extern uint32_t USART_input_value;
