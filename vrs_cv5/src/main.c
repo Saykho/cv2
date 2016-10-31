@@ -28,6 +28,8 @@ SOFTWARE.
 
 /* Includes */
 #include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "stm32l1xx.h"
 #include "vrs_cv5.h"
 
@@ -37,7 +39,13 @@ SOFTWARE.
 /* Private variables */
 /* Private function prototypes */
 /* Private functions */
+char *allocateString();
+void fillWithDisplayedValue(char *str, int displayMode);
+int getPressedButton();
+
+void rcc_init();
 void adc_init();
+void uart_init();
 void Delay(uint32_t nTime);
 void interrupt_init();
 void gpio_init();
@@ -70,16 +78,16 @@ int main(void)
 
   /* TODO - Add your application code here */
 
+	rcc_init();
     adc_init();
     gpio_init();
+    uart_init();
     interrupt_init();
 
 
-
-	int buttonValues[] = {2500, 3000, 3550, 3800};
-
     int delays[] = {2,4,9,16,25};
 	int mode = 4;
+	int displayMode = 0;
 	int lastButtonPressed = 4;
   	while (1)
   	{
@@ -87,16 +95,23 @@ int main(void)
 
   		for (int i=0; i<delays[mode]; i++) {
 
-  			int buttonPressed = 0;
-  			for (buttonPressed = 0; buttonPressed < 4; buttonPressed++) {
-  				if (buttonValues[buttonPressed] > AD_value)
-  					break;
-  			}
-
+  			// led blinking mode changing
+  			int buttonPressed = getPressedButton();
   			if (lastButtonPressed != 4 && buttonPressed == 4) {
   				mode = lastButtonPressed;
   			}
   			lastButtonPressed = buttonPressed;
+
+  			// AD value displaying mode changing
+  			if (USART_input_value == 'm') {
+  				USART_input_value = 0;
+  				displayMode = (displayMode+1)%2;
+  			}
+
+  			char *str = allocateString();
+  			fillWithDisplayedValue(str, displayMode);
+  			stringToSend = str;
+
   			Delay(20);
   		}
   	}
@@ -111,12 +126,44 @@ void Delay(uint32_t nTime)
 //  while(TimingDelay != 0);
 }
 
+char *allocateString() {
+	char *str = str1;
+	if (str == stringToSend || str == stringBeingSent)
+		str = str2;
+	if (str == stringToSend || str == stringBeingSent)
+		str = str3;
+	return str;
+}
+
+void fillWithDisplayedValue(char *str, int displayMode) {
+	if (displayMode == 0) {
+		float value = AD_value/(float)(4095)*3.3f;
+		sprintf(str, "\r\n%d.%dV", (int)value, ((int)(value*100))%100);
+	}
+	else
+		sprintf(str, "\r\n%d", (int)AD_value);
+}
+
+int getPressedButton() {
+	const int buttonValues[] = {2500, 3000, 3550, 3800};
+
+	int buttonPressed = 0;
+	for (buttonPressed = 0; buttonPressed < 4; buttonPressed++) {
+		if (buttonValues[buttonPressed] > AD_value)
+			break;
+	}
+
+	return buttonPressed;
+}
+
+void rcc_init() {
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);//Opraviù a upraviù
+	RCC_APBjPeriphClockCmd(RCC_APBjPeriph_USARTi, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
+}
 void adc_init()
 {
 	ADC_InitTypeDef ADC_InitStructure;
-	/* Enable GPIO clock */
-	/* Enable ADC clock */
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
 	/* Enable the HSI oscillator */
 	RCC_HSICmd(ENABLE);
 	/* Check that HSI oscillator is ready */
@@ -139,6 +186,7 @@ void adc_init()
 
     ADC_SoftwareStartConv(ADC1);
 	ADC_ITConfig(ADC1, ADC_IT_EOC, ENABLE);
+//	ADC_ITConfig(ADC1, ADC_IT_OVR, ENABLE);
 }
 
 void interrupt_init() {
@@ -150,12 +198,15 @@ void interrupt_init() {
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 
-//	ADC_ITConfig(ADC1, ADC_IT_OVR, ENABLE);
+	NVIC_InitStructure.NVIC_IRQChannel = USARTi_IRQn; //zoznam preruöenÌ n·jdete v s˙bore stm32l1xx.h
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
 }
 
 void gpio_init() {
 	GPIO_InitTypeDef GPIO_InitStructure;
-	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);//Opraviù a upraviù
 	/* Configure ADCx Channel 2 as analog input */
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_40MHz;
@@ -173,15 +224,26 @@ void gpio_init() {
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_40MHz;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2 | GPIO_Pin_3;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource2, GPIO_AF_USARTi);
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource3, GPIO_AF_USARTi);
 }
 
 void uart_init() {
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_USART1);
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource10, GPIO_AF_USART1);
+	USART_InitTypeDef USART_InitStructure;
+	USART_InitStructure.USART_BaudRate = 9600;
+	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+	USART_InitStructure.USART_StopBits = USART_StopBits_1;
+	USART_InitStructure.USART_Parity = USART_Parity_No;
+	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+	USART_Init(USARTi, &USART_InitStructure);
+
+	USART_ITConfig(USARTi, USART_IT_RXNE, ENABLE);
+	USART_ITConfig(USARTi, USART_IT_TC, ENABLE);
+	USART_Cmd(USARTi, ENABLE);
 }
 
 #ifdef  USE_FULL_ASSERT
